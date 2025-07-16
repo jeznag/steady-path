@@ -10,6 +10,16 @@ class SpeechDelegate: NSObject, AVSpeechSynthesizerDelegate, ObservableObject {
     }
 }
 
+func setupAudioSession() {
+    do {
+        // Set category for playback (for synthesizer) and record (for recognizer)
+        try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
+        try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
+    } catch {
+        print("Failed to set up audio session: \(error.localizedDescription)")
+    }
+}
+
 struct CheckInView: View {
     @State private var currentPrompt = ""
     @State private var responseText = ""
@@ -42,7 +52,7 @@ struct CheckInView: View {
                     .foregroundColor(.blue)
             }
 
-            Text(responseText)
+            Text(isListening ? recognizer.liveTranscript : responseText)
                 .italic()
                 .padding()
 
@@ -52,6 +62,7 @@ struct CheckInView: View {
             .disabled(isListening || questionIndex >= questions.count)
         }
         .onAppear {
+            setupAudioSession() // Add this line
             requestSpeechAuth()
             playNextPrompt()
         }
@@ -94,36 +105,73 @@ struct CheckInView: View {
     }
 }
 
+// -------------------------------------------------------------------------------------------------------
+
 class RecognizerController: ObservableObject {
     private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-AU"))
     private let audioEngine = AVAudioEngine()
-    private var request: SFSpeechAudioBufferRecognitionRequest?
-    private var task: SFSpeechRecognitionTask?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+    @Published var liveTranscript: String = ""
 
     func startTranscription(onResult: @escaping (String) -> Void) {
-        request = SFSpeechAudioBufferRecognitionRequest()
-        guard let request = request,
-              let recognizer = recognizer,
-              recognizer.isAvailable else { return }
+        // Cancel the previous task if it's running
+        if recognitionTask != nil {
+            recognitionTask?.cancel()
+            recognitionTask = nil
+        }
 
-        let node = audioEngine.inputNode
-        let format = node.outputFormat(forBus: 0)
-        node.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
-            request.append(buffer)
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let recognitionRequest = recognitionRequest else {
+            fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object")
+        }
+        recognitionRequest.shouldReportPartialResults = true // Crucial for live updates
+
+        guard let recognizer = recognizer, recognizer.isAvailable else {
+            print("Speech recognizer is not available or not supported for the current locale.")
+            return
+        }
+
+        let inputNode = audioEngine.inputNode
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+            recognitionRequest.append(buffer)
         }
 
         audioEngine.prepare()
-        try? audioEngine.start()
-
-        task = recognizer.recognitionTask(with: request) { result, error in
-            if let result = result, result.isFinal {
-                print("transcript" + result.bestTranscription.formattedString )
-                onResult(result.bestTranscription.formattedString)
+        do {
+            try audioEngine.start()
+        } catch {
+            print("Audio engine couldn't start: \(error)")
+        }
+        
+        // Request authorization again (it's good practice to ensure it's authorized when starting a new task)
+        SFSpeechRecognizer.requestAuthorization { status in
+            print("Speech authorization status: \(status)")
+            if status != .authorized {
+                print("Speech recognition not authorized.")
                 self.stop()
+                return
+            }
+        }
+
+        recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { result, error in
+            var isFinal = false
+
+            if let result = result {
+                DispatchQueue.main.async {
+                    self.liveTranscript = result.bestTranscription.formattedString
+                }
+                isFinal = result.isFinal
             }
 
-            if error != nil {
+            if error != nil || isFinal {
                 self.stop()
+                if let result = result {
+                    onResult(result.bestTranscription.formattedString)
+                } else {
+                    onResult("") // In case of error with no partial result
+                }
             }
         }
     }
@@ -131,7 +179,13 @@ class RecognizerController: ObservableObject {
     func stop() {
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
-        task?.cancel()
-        request = nil
+        recognitionRequest?.endAudio()
+        recognitionTask?.cancel() // Changed from .cancel() to .finish() if you want to ensure the final result is processed before stopping
+        recognitionTask = nil
+        recognitionRequest = nil
+        // Reset liveTranscript when stopping
+        DispatchQueue.main.async {
+            self.liveTranscript = ""
+        }
     }
 }

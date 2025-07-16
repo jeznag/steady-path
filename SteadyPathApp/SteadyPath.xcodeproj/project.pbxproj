@@ -29,9 +29,22 @@
 		B262970F2E2739A400DC97A5 /* SteadyPathUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SteadyPathUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B26297592E27545000DC97A5 /* Exceptions for "SteadyPath" folder in "SteadyPath" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B26296F42E2739A000DC97A5 /* SteadyPath */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B26296F72E2739A000DC97A5 /* SteadyPath */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B26297592E27545000DC97A5 /* Exceptions for "SteadyPath" folder in "SteadyPath" target */,
+			);
 			path = SteadyPath;
 			sourceTree = "<group>";
 		};
