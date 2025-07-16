@@ -30,7 +30,7 @@ struct CreateView: View {
                         Text("Create")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(.yellow1)
                             .multilineTextAlignment(.center)
                             .frame(width: 250)
                         Spacer()

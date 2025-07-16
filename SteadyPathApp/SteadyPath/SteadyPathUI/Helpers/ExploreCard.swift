@@ -20,16 +20,16 @@ struct ExploreCard: View {
     @State var heartStatus: String = "heart"
     @State var colorArrayCopy: [Color] = [
         Color(#colorLiteral(red: 0.879907012, green: 0.7766652703, blue: 0.1443305612, alpha: 1)),
-        Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)),
-        Color(.blue),
+        Color(#colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1)),
+        Color(#colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)),
     ]
     
     @EnvironmentObject var savedCards: Deck
     
     let colorArray: [Color] = [
         Color(#colorLiteral(red: 0.879907012, green: 0.7766652703, blue: 0.1443305612, alpha: 1)),
-        Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)),
-        Color(.blue),
+        Color(#colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1)),
+        Color(#colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)),
     ]
     
     var body: some View {
@@ -37,7 +37,7 @@ struct ExploreCard: View {
             ZStack {
                 ZStack {
                     Rectangle()
-                        .foregroundColor(.blue)
+                        .foregroundColor(.white)
                         .ignoresSafeArea()
                     
                     RoundedRectangle(cornerRadius: 25)

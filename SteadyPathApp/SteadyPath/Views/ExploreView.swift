@@ -30,14 +30,14 @@ struct ExploreView: View {
         NavigationStack {
             ZStack{
                 Rectangle()
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.white)
                     .ignoresSafeArea()
                 
                 VStack {
                     Text("Motivation")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(.yellow1)
                         .multilineTextAlignment(.center)
                         .frame(width: 250)
                     

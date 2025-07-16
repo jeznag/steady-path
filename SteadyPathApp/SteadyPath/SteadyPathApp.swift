@@ -21,6 +21,11 @@ struct SteadyPathApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
+                ContentView()
+                    .tabItem {
+                        Label("FirstStart", systemImage: "person.fill.turn.down")
+                    }
+                
                 HomeView()
                     .tabItem {
                         Label("Home", systemImage: "house")

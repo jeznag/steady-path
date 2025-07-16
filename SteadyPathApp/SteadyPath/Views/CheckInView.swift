@@ -60,6 +60,11 @@ struct CheckInView: View {
                 playNextPrompt()
             }
             .disabled(isListening || questionIndex >= questions.count)
+            
+            
+            Button("Stop") {
+                recognizer.stop()
+            }
         }
         .onAppear {
             setupAudioSession() // Add this line
@@ -77,6 +82,10 @@ struct CheckInView: View {
                 responseText = transcript
                 isListening = false
                 questionIndex += 1
+            }
+            // TODO - Take a look at
+            if questionIndex == questions.count {
+                recognizer.stop()
             }
         }
     }
@@ -154,6 +163,8 @@ class RecognizerController: ObservableObject {
                 return
             }
         }
+        
+        
 
         recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { result, error in
             var isFinal = false

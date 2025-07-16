@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct HomeView: View {
     
     let size: CGFloat = 100
@@ -41,19 +42,22 @@ struct HomeView: View {
                 
                 
                 
+                // Left eye
                 Circle()
                     .foregroundColor(.white)
                     .frame(width: 15, height: 25)
                     .position(x: 160, y: 250)
-                
-                
-                
+
+                // Right eye
                 Circle()
                     .foregroundColor(.white)
                     .frame(width: 15, height: 15)
                     .position(x: 200, y: 260)
-                
-                
+
+            
+                HomeSmile(size: 100)
+                    .padding(.bottom, 200)
+                    .offset(x: -80, y: 0)                    .rotationEffect(.degrees(25))
                 
                 VStack {
                     
@@ -76,6 +80,7 @@ struct HomeView: View {
                 
                 
                 .padding(.top, 500)
+              
                 
                 
                 // Button
