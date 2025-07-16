@@ -1,4 +1,4 @@
-Test #2
+This is updated
 # 🎙️ SteadyPath Voice-Based Mental Health Check-In Proposal
 
 **SteadyPath** is an iOS app designed for individuals with schizophrenia or bipolar disorder. It facilitates structured, AI-led voice check-ins to support medication adherence, substance use monitoring, and mental health triage. The app conducts a **two-way voice conversation**, records the full session, and uses AI (GPT-4.1 and Gemini) to assess mental state and escalate if necessary.
