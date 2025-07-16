@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		90F3CE162E274EF000C4DDFE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F3CE152E274EF000C4DDFE /* WidgetKit.framework */; };
+		90F3CE182E274EF000C4DDFE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F3CE172E274EF000C4DDFE /* SwiftUI.framework */; };
+		90F3CE292E274EF100C4DDFE /* pill-widgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 90F3CE132E274EF000C4DDFE /* pill-widgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		90F3CDD02E273A2D00C4DDFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,13 +27,47 @@
 			remoteGlobalIDString = 90F3CDBF2E273A2C00C4DDFE;
 			remoteInfo = "steady path";
 		};
+		90F3CE272E274EF100C4DDFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90F3CDB82E273A2C00C4DDFE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90F3CE122E274EF000C4DDFE;
+			remoteInfo = "pill-widgetExtension";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		90F3CE2A2E274EF100C4DDFE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				90F3CE292E274EF100C4DDFE /* pill-widgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		90F3CDC02E273A2C00C4DDFE /* steady path.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "steady path.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		90F3CDCF2E273A2D00C4DDFE /* steady pathTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "steady pathTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		90F3CDD92E273A2D00C4DDFE /* steady pathUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "steady pathUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		90F3CE132E274EF000C4DDFE /* pill-widgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "pill-widgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		90F3CE152E274EF000C4DDFE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		90F3CE172E274EF000C4DDFE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		90F3CE2D2E274EF100C4DDFE /* Exceptions for "pill-widget" folder in "pill-widgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 90F3CE122E274EF000C4DDFE /* pill-widgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		90F3CDC22E273A2C00C4DDFE /* steady path */ = {
@@ -43,6 +83,14 @@
 		90F3CDDC2E273A2D00C4DDFE /* steady pathUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "steady pathUITests";
+			sourceTree = "<group>";
+		};
+		90F3CE192E274EF000C4DDFE /* pill-widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				90F3CE2D2E274EF100C4DDFE /* Exceptions for "pill-widget" folder in "pill-widgetExtension" target */,
+			);
+			path = "pill-widget";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +117,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		90F3CE102E274EF000C4DDFE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90F3CE182E274EF000C4DDFE /* SwiftUI.framework in Frameworks */,
+				90F3CE162E274EF000C4DDFE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +135,8 @@
 				90F3CDC22E273A2C00C4DDFE /* steady path */,
 				90F3CDD22E273A2D00C4DDFE /* steady pathTests */,
 				90F3CDDC2E273A2D00C4DDFE /* steady pathUITests */,
+				90F3CE192E274EF000C4DDFE /* pill-widget */,
+				90F3CE142E274EF000C4DDFE /* Frameworks */,
 				90F3CDC12E273A2C00C4DDFE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +147,18 @@
 				90F3CDC02E273A2C00C4DDFE /* steady path.app */,
 				90F3CDCF2E273A2D00C4DDFE /* steady pathTests.xctest */,
 				90F3CDD92E273A2D00C4DDFE /* steady pathUITests.xctest */,
+				90F3CE132E274EF000C4DDFE /* pill-widgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		90F3CE142E274EF000C4DDFE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				90F3CE152E274EF000C4DDFE /* WidgetKit.framework */,
+				90F3CE172E274EF000C4DDFE /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,10 +171,12 @@
 				90F3CDBC2E273A2C00C4DDFE /* Sources */,
 				90F3CDBD2E273A2C00C4DDFE /* Frameworks */,
 				90F3CDBE2E273A2C00C4DDFE /* Resources */,
+				90F3CE2A2E274EF100C4DDFE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				90F3CE282E274EF100C4DDFE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				90F3CDC22E273A2C00C4DDFE /* steady path */,
@@ -163,6 +234,28 @@
 			productReference = 90F3CDD92E273A2D00C4DDFE /* steady pathUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		90F3CE122E274EF000C4DDFE /* pill-widgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90F3CE2E2E274EF100C4DDFE /* Build configuration list for PBXNativeTarget "pill-widgetExtension" */;
+			buildPhases = (
+				90F3CE0F2E274EF000C4DDFE /* Sources */,
+				90F3CE102E274EF000C4DDFE /* Frameworks */,
+				90F3CE112E274EF000C4DDFE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				90F3CE192E274EF000C4DDFE /* pill-widget */,
+			);
+			name = "pill-widgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "pill-widgetExtension";
+			productReference = 90F3CE132E274EF000C4DDFE /* pill-widgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +277,9 @@
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = 90F3CDBF2E273A2C00C4DDFE;
 					};
+					90F3CE122E274EF000C4DDFE = {
+						CreatedOnToolsVersion = 16.4;
+					};
 				};
 			};
 			buildConfigurationList = 90F3CDBB2E273A2C00C4DDFE /* Build configuration list for PBXProject "steady path" */;
@@ -203,6 +299,7 @@
 				90F3CDBF2E273A2C00C4DDFE /* steady path */,
 				90F3CDCE2E273A2D00C4DDFE /* steady pathTests */,
 				90F3CDD82E273A2D00C4DDFE /* steady pathUITests */,
+				90F3CE122E274EF000C4DDFE /* pill-widgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +320,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		90F3CDD72E273A2D00C4DDFE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90F3CE112E274EF000C4DDFE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +357,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		90F3CE0F2E274EF000C4DDFE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +376,11 @@
 			isa = PBXTargetDependency;
 			target = 90F3CDBF2E273A2C00C4DDFE /* steady path */;
 			targetProxy = 90F3CDDA2E273A2D00C4DDFE /* PBXContainerItemProxy */;
+		};
+		90F3CE282E274EF100C4DDFE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90F3CE122E274EF000C4DDFE /* pill-widgetExtension */;
+			targetProxy = 90F3CE272E274EF100C4DDFE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -510,6 +626,58 @@
 			};
 			name = Release;
 		};
+		90F3CE2B2E274EF100C4DDFE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "pill-widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "pill-widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "steady-path.steady-path.pill-widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		90F3CE2C2E274EF100C4DDFE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "pill-widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "pill-widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "steady-path.steady-path.pill-widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -545,6 +713,15 @@
 			buildConfigurations = (
 				90F3CDEA2E273A2D00C4DDFE /* Debug */,
 				90F3CDEB2E273A2D00C4DDFE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90F3CE2E2E274EF100C4DDFE /* Build configuration list for PBXNativeTarget "pill-widgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90F3CE2B2E274EF100C4DDFE /* Debug */,
+				90F3CE2C2E274EF100C4DDFE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
