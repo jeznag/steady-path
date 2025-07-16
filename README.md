@@ -107,9 +107,8 @@ You are a clinical assistant. Based on the transcript below, rate the following 
 
 Return a short summary and triage status: OK / Flag / Urgent.
 ✅ AI Output Format
-json
-Copy
-Edit
+
+```
 {
   "stress": 7,
   "mood": 4,
@@ -121,6 +120,8 @@ Edit
   "summary": "User has mild stress and low mood but no urgent risks.",
   "triage": "Flag"
 }
+```
+
 🚨 Triage & Alert Logic
 Condition	Action
 Any score ≥ 8	Immediate alert
