@@ -87,6 +87,7 @@ All audio (both sides) is recorded and saved locally.
     "duration_sec": ...
   }
 }
+```
 
 ### 🧠 AI Analysis via GPT-4.1 + Gemini
 Prompt:
