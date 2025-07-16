@@ -11,8 +11,11 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+init_db()
+
 @app.route("/checkin", methods=["POST"])
 def handle_checkin():
+    print("FILES RECEIVED:", request.files.keys())
     audio_file = request.files.get("audio")
     user_id = request.form.get("user_id", "anonymous")
 
@@ -37,3 +40,7 @@ def handle_checkin():
         "transcript": transcript,
         "analysis": result
     })
+
+if __name__ == "__main__":
+    init_db()
+    app.run(debug=True, host="0.0.0.0", port=5000)
