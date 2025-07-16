@@ -28,7 +28,7 @@ struct SteadyPathApp: App {
 
                 ExploreView()
                     .tabItem {
-                        Label("Account", systemImage: "person.crop.circle")
+                        Label("Motivation", systemImage: "person.crop.circle")
                     }
 
                 CheckInView()
