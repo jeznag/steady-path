@@ -25,16 +25,25 @@
 - HoNOS
 
 ### 🎤 Conversation Flow (AI asks, user responds)
-1. Hi there. Let’s check in — did you take your medication today?
-2. What did you get up to today?
-3. How has your mood been today?
-4. Have you been feeling more stressed than usual?
-5. Did you drink alcohol or use cannabis today?
-6. Have you had any thoughts of hurting yourself or ending your life?
-7. Have you found it hard to get out of bed, eat, or take care of yourself?
-8. Did you have any arguments or feel unsafe around others today?
-9. Have you had any strange or suspicious thoughts lately?
-10. Is there anything else you want to share with me today?
+"Alright mate, first things first — you take your meds today or what?"
+
+"What’ve ya been up to today — anything half decent?"
+
+"How’s the headspace been? Bit flat or cruisin’ alright?"
+
+"Been feelin' tense or cooked lately? Proper stressed out?"
+
+"Be honest — been on the beers or had a cheeky puff today?"
+
+"Had any rough thoughts? Like stuff you wouldn’t tell ya mum?"
+
+"Lookin’ after yourself alright? Eatin', showerin', getting outta bed?"
+
+"Had any dramas with people? Anyone givin' you grief?"
+
+"Had any weird thoughts or feelin' like people are suss on ya?"
+
+"Anything else you wanna get off your chest before we wrap up?"
 
 ---
 
