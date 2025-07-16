@@ -1,80 +1,177 @@
-# 🧠 Project Overview: SteadyPath
-SteadyPath is an iOS app that helps people with schizophrenia or bipolar disorder stay on track with medication, monitor mental wellbeing, and receive AI-guided support. It combines:
+# 🎙️ SteadyPath Voice-Based Mental Health Check-In Proposal
 
-📹 Video-confirmed medication adherence
+**SteadyPath** is an iOS app designed for individuals with schizophrenia or bipolar disorder. It facilitates structured, AI-led voice check-ins to support medication adherence, substance use monitoring, and mental health triage. The app conducts a **two-way voice conversation**, records the full session, and uses AI (GPT-4.1 and Gemini) to assess mental state and escalate if necessary.
 
-🤖 AI conversation check-ins
+---
 
-🧠 Substance use + mood triage
+## 🧠 Clinical Goals
 
-🚨 Escalation system for crisis situations
+- Encourage **medication adherence**
+- Monitor for **substance use** (alcohol, cannabis)
+- Detect signs of:
+  - **Stress and low mood**
+  - **Suicidality**
+  - **Paranoia or thought disorder**
+  - **Decompensation / incoherence**
+- Provide **early warning alerts** to clinicians or carers
 
-🛡️ Privacy-first design leveraging Apple Intelligence
+---
 
-🧱 Architecture Overview
-⚙️ Frontend: iOS App
-Framework: SwiftUI + Combine
+## 🗣️ Check-In Structure: Two-Way Voice Conversation
 
-Apple Intelligence:
+### ✳️ Inspired by:
+- BASIS-32
+- Life Skills Profile
+- HoNOS
 
-On-device LLM API (for AI conversation + triage)
+### 🎤 Conversation Flow (AI asks, user responds)
+1. Hi there. Let’s check in — did you take your medication today?
+2. What did you get up to today?
+3. How has your mood been today?
+4. Have you been feeling more stressed than usual?
+5. Did you drink alcohol or use cannabis today?
+6. Have you had any thoughts of hurting yourself or ending your life?
+7. Have you found it hard to get out of bed, eat, or take care of yourself?
+8. Did you have any arguments or feel unsafe around others today?
+9. Have you had any strange or suspicious thoughts lately?
+10. Is there anything else you want to share with me today?
 
-Core ML + VisionKit for video analysis (pill-taking)
+---
 
-HealthKit integration (mood tracking, sleep, etc.)
+## 🧱 Technical Architecture
 
-AVFoundation: record/preview video for med ingestion
+### 📱 iOS App (Frontend)
+| Component            | Tech                        |
+|---------------------|-----------------------------|
+| UI                  | SwiftUI                     |
+| TTS (AI voice)      | `AVSpeechSynthesizer` or ElevenLabs |
+| Speech recognition  | `SFSpeechRecognizer` or Whisper |
+| Voice recording     | `AVAudioEngine` / `AVCaptureSession` (to mix user + AI audio) |
+| Local audio storage | `.m4a` / `.wav`             |
+| Upload              | HTTPS to Python backend     |
 
-FaceID / Secure Enclave: protect sensitive content
+---
 
-Push Notifications: for check-in reminders + alerts
+### 🔁 Conversation Engine (On-Device)
+1. AI asks a question (via TTS)
+2. User speaks response (captured via mic)
+3. Transcribed to text using STT
+4. Text sent to GPT/Gemini for response/triage
+5. AI responds with follow-up question
+6. Repeat until all questions complete
 
-☁️ Backend (if needed)
-While most logic stays on-device, some minimal cloud infra may be needed:
+All audio (both sides) is recorded and saved locally.
 
-API Gateway + Backend
+---
 
-Auth (e.g. Firebase Auth or Sign in with Apple)
+## 🧪 Backend (Python Server)
 
-Encrypted cloud sync for:
+### 🔄 Upload Payload
 
-Check-in logs (optional)
+```json
+{
+  "audio_url": "...",
+  "transcript": "...",
+  "session_metadata": {
+    "timestamp": "...",
+    "user_id": "...",
+    "duration_sec": ...
+  }
+}
 
-Escalation triggers
+### 🧠 AI Analysis via GPT-4.1 + Gemini
+Prompt:
 
-Clinician access portal (if applicable)
+plaintext
+Copy
+Edit
+You are a clinical assistant. Based on the transcript below, rate the following from 0–10:
 
-DB: Firebase Firestore or PostgreSQL
+- Stress level
+- Mood (0 = sad, 10 = happy)
+- Coherence of speech
+- Paranoia or suspicious thoughts
+- Suicidality
+- Alcohol or drug use
+- Medication adherence
 
-Serverless Functions: For handling escalations (e.g. notify carer / crisis line)
+Return a short summary and triage status: OK / Flag / Urgent.
+✅ AI Output Format
+json
+Copy
+Edit
+{
+  "stress": 7,
+  "mood": 4,
+  "coherence": 8,
+  "paranoia": 2,
+  "suicidality": 0,
+  "substance_use": 5,
+  "med_adherence": 9,
+  "summary": "User has mild stress and low mood but no urgent risks.",
+  "triage": "Flag"
+}
+🚨 Triage & Alert Logic
+Condition	Action
+Any score ≥ 8	Immediate alert
+Suicidality ≥ 3	Immediate alert
+Coherence < 5	Flag for review
+Trend worsens over 3 sessions	Delayed alert
+All scores mild/stable	No alert
 
-🧰 AI Components
-Triage NLP Engine (on-device)
+### Alerts can go to:
 
-Detects keywords/patterns for:
+Carer/family (email/SMS)
 
-Missed meds
+Clinical dashboard
 
-Risky substance use
+Crisis team (for urgent cases)
 
-Self-harm / relapse
+### 🗃️ Database Storage
+Table	Fields
+users	user_id, contact info, risk profile
+checkins	timestamp, transcript, triage score JSON, audio URL
+alerts	user_id, timestamp, type (urgent/trend), resolution status
 
-Provides a risk score and maps to escalation level
+### ⏱️ Session Lifecycle
+User initiates check-in
 
-Conversational AI Companion
+Full audio session recorded
 
-Motivational interviewing style
+Transcript + audio uploaded to backend
 
-Reflective listening
+AI generates triage data
 
-Pulls in personalised video clips if needed
+Risk scored + trend logged
 
-🧩 Key Features Breakdown
-Feature	Description	Tools / APIs
-✅ Daily AI Check-In	Conversational chatbot asks about meds, mood, and substance use	Apple LLM API / on-device
-📹 Med Adherence Confirmation	Record + analyse pill-taking	VisionKit + Core ML
-🧠 Mood + Substance Log	Track daily states, optional journaling	HealthKit + SwiftUI
-🧷 Escalation Engine	Multi-tier triage: carer, crisis line, 000	On-device + optional backend
-🔁 Motivation Video Loop	Watch pre-recorded messages when feeling unwell	Local storage + media player
-🔒 Privacy & Security	No cloud storage of video unless user consents	FaceID, App Group Keychain
+Alert sent if threshold met
 
+### 📦 Future Enhancements
+Support real-time voice interaction (streaming STT/LLM)
+
+Use on-device LLMs for privacy-preserving analysis
+
+Sync with HealthKit for mood/sleep correlation
+
+Add motivational video playback if non-adherence detected
+
+Web dashboard for clinicians
+
+### 👩‍💻 Dev Roles (5-Dev Team)
+Dev Role	Responsibilities
+iOS Dev 1	TTS + STT integration
+iOS Dev 2	Voice recording + session control
+iOS Dev 3	SwiftUI UI + local storage
+Backend Dev	Python API for upload + analysis
+AI Engineer	Prompt design + GPT/Gemini integration + risk logic
+
+### ✅ MVP Build Scope
+10-question scripted check-in
+
+Voice-to-voice conversation loop
+
+Record full audio session (user + AI)
+
+Transcribe + analyse with GPT/Gemini
+
+Triage + alert trigger
