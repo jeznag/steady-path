@@ -1,108 +1,111 @@
-//
-//  HomeView.swift
-//  AFP-Ripple
-//
-//  Created by Mira on 24/2/2025.
-//
-
 import SwiftUI
 
-
 struct HomeView: View {
-    
-    let size: CGFloat = 100
-    
-    @State private var position: CGPoint = .init(x: 170, y: 300)
-    
+    @State private var opacity: Double = 0  // Controls fade in
     
     var body: some View {
-        
-        
-        
-        
-        
         NavigationStack {
             ZStack {
                 Rectangle()
-                    .frame (width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                     .opacity(0.8)
-                    .foregroundColor(Color.teal)
+                    .foregroundColor(Color.white)
                     .ignoresSafeArea()
                 
+                // Arm Rectangle
+                Rectangle()
+                    .foregroundColor(Color(red: 244/255, green: 182/255, blue: 227/255))  // nurse pink
+                    .frame(width: 50, height: 380)
+                    .position(x: 368, y: 550)
+                    .rotationEffect(.degrees(-15))
+                    .rotation3DEffect(.degrees(360), axis: (x: 0, y: 1, z: 0))
                 
-                
+                // Head Circle
                 Circle()
-                    .foregroundColor(.blue)
-                    .frame(width: 580, height:580)
+                    .foregroundColor(Color(red: 244/255, green: 182/255, blue: 227/255))  // nurse pink
+                    .frame(width: 580, height: 580)
                     .position(x: 80, y: 400)
                     .shadow(radius: 20)
                     .padding()
                     .rotation3DEffect(.degrees(360), axis: (x: 0, y: 1, z: 0))
                 
-                
-                
-                
-                // Left eye
+                // Left eye with pupil
                 Circle()
                     .foregroundColor(.white)
-                    .frame(width: 15, height: 25)
+                    .frame(width: 25, height: 25)
                     .position(x: 160, y: 250)
-
-                // Right eye
+                
+                Circle()
+                    .foregroundColor(.black)
+                    .frame(width: 16, height: 20)
+                    .position(x: 160, y: 250)
+                
+                // Right eye with pupil
                 Circle()
                     .foregroundColor(.white)
-                    .frame(width: 15, height: 15)
+                    .frame(width: 25, height: 25)
                     .position(x: 200, y: 260)
+                
+                Circle()
+                    .foregroundColor(.black)
+                    .frame(width: 16, height: 16)
+                    .position(x: 200, y: 260)
+                
+                // Smile
+                HomeSmile(size: 130)
+                    .padding(.bottom, -150)
+                    .offset(x: -110, y: -220)
+                    .rotationEffect(.degrees(25))
+                    .padding(.top, 150)
+                
+                // Speech bubble
+                VStack(spacing: 0) {
+                    Text("Welcome \(dataModel.userName)")
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 54)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.gray.opacity(0.4), lineWidth: 0.5)
+                                )
+                                .shadow(radius: 4)
+                        )
+                        .offset(y: -83)
 
-            
-                HomeSmile(size: 100)
-                    .padding(.bottom, 200)
-                    .offset(x: -80, y: 0)                    .rotationEffect(.degrees(25))
-                
-                VStack {
                     
-                    
-                    
-                    NavigationLink {
-                        LoginView()
-                    } label: {
-                        Text("Sign In")
-                            .buttonBorderShape(.roundedRectangle(radius: 5))
-                            .padding(20)
-                            .foregroundColor(.gray)
-                            .background(.white)
-                            .cornerRadius(200)
-                        
-                        
-                        
-                    }
+                    Triangle()
+                        .fill(Color.white)
+                        .frame(width: 24, height: 12)
+                        .rotationEffect(.degrees(0))
+                        .offset(y: -167)
                 }
-                
-                
-                .padding(.top, 500)
-              
-                
-                
-                // Button
-                // Look up `.sheet` SwiftUI
-                
-                
-                
-                Text("Welcome to SteadyPath")
-                
-                    .padding()
-                    .background(Color.white)
-                    .foregroundColor(.gray)
-                    .cornerRadius(100)
-                    .padding()
-                    .font(.title)
-                    .padding(.top, 10)
-                
-              
+                .position(x: UIScreen.main.bounds.midX, y: 470)
+            }
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.0)) {
+                    opacity = 1.0
+                }
             }
         }
     }
 }
+
+struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { path in
+            path.move(to: CGPoint(x: rect.minX, y: rect.maxY))   // bottom left
+            path.addLine(to: CGPoint(x: rect.midX, y: rect.minY)) // top middle
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY)) // bottom right
+            path.closeSubpath()
+        }
+    }
+}
+
 #Preview {
     HomeView()
 }

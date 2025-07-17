@@ -48,19 +48,22 @@ struct ExploreCard: View {
                                  colorArrayCopy[1],
                                  colorArrayCopy[2]],
                             startPoint: .top, endPoint: .bottom))
-//                        .overlay(
-//                                RoundedRectangle(cornerRadius: 25)
-//                                    .stroke(.rippleYellow1, lineWidth: 2)
-//                            )
+                    //                        .overlay(
+                    //                                RoundedRectangle(cornerRadius: 25)
+                    //                                    .stroke(.rippleYellow1, lineWidth: 2)
+                    //                            )
                     
-
-                    VStack{
+                    
+                    VStack {
                         Spacer()
-                        Text(templateText)
-                            .foregroundStyle(.white)
-                            .font(.title)
-                            .fontWeight(.semibold)
-                        ZStack {
+                        
+                        // Moved text lower
+                        VStack(spacing: 12) {
+                            Text(templateText)
+                                .foregroundStyle(.white)
+                                .font(.title)
+                                .fontWeight(.semibold)
+                            
                             Text(affirmationText)
                                 .multilineTextAlignment(.center)
                                 .frame(width: 200, height: 60)
@@ -68,52 +71,41 @@ struct ExploreCard: View {
                                 .font(.largeTitle)
                                 .fontWeight(.black)
                         }
-                        .padding(.top, -10)
-                        Spacer()
+                        .padding(.top, 30) // Slightly lower
                         
-                        HStack{
-                            Spacer()
+                        Spacer()
+                
+                        // Bottom buttons aligned horizontally
+                        HStack(spacing: 30) {
                             Button {
                                 liked.toggle()
-                                
-                                if liked {
-                                    savedCards.addCard(card: Card(template: templateText, affirmation: affirmationText, saved: true))
-                                }
                             } label: {
                                 Image(systemName: liked ? "heart.fill" : "heart")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 20, height: 20)
+                                    .frame(width: 25, height: 25)
                                     .foregroundStyle(.white)
                             }
-                            Spacer()
-                            NavigationLink(destination: CreateView()) {
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(.white)
-                            }
-                            Spacer()
+                            
                             Button {
                                 showingShareSheet.toggle()
                             } label: {
                                 Image(systemName: "paperplane.fill")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 20, height: 20)
+                                    .frame(width: 25, height: 25)
                                     .foregroundStyle(.white)
                             }
-                            Spacer()
-                                .sheet(isPresented: $showingShareSheet) {
-                                    // Step 3: Present the Share Sheet
-                                    ShareSheet(activityItems: [templateText + " " + affirmationText])
-                                }
+                            .sheet(isPresented: $showingShareSheet) {
+                                ShareSheet(activityItems: [templateText + " " + affirmationText])
+                            }
                         }
+                        .padding(.bottom, 20)
+                        
                     }
                     .padding()
-                    .padding(.bottom, 7)
-                    .frame(width:350, height: 500)
+                    .frame(width: 350, height: 500)
+                    
                 }
                 .onAppear(){
                     colorArrayCopy = colorArray.shuffled()
@@ -121,22 +113,22 @@ struct ExploreCard: View {
             }
         }
     }
-}
-
-struct ShareSheet: UIViewControllerRepresentable {
-    var activityItems: [Any]  // The content to be shared
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        return UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    
+    
+    struct ShareSheet: UIViewControllerRepresentable {
+        var activityItems: [Any]  // The content to be shared
+        
+        func makeUIViewController(context: Context) -> UIActivityViewController {
+            return UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        }
+        
+        func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
     }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-
-
-#Preview {
-    @Previewable @State var templateText = "I am preview"
-    @Previewable @State var affirmationText = "Cool"
-    @Previewable @State var liked = false
-    ExploreCard(templateText: $templateText, affirmationText: $affirmationText, liked: $liked)
+    
+    
+    //    #Preview {
+    //        @Previewable @State var templateText = "I am preview"
+    //        @Previewable @State var affirmationText = "Cool"
+    //        @Previewable @State var liked = false
+    //        ExploreCard(templateText: $templateText, affirmationText: $affirmationText, liked: $liked)
 }

@@ -17,10 +17,8 @@ struct ExploreView: View {
         Card(template: "I can", affirmation: "achieve", saved: false),
         Card(template: "I will", affirmation: "progress", saved: false),
         Card(template: "I will", affirmation: "be happy", saved: false),
-        Card(template: "I am", affirmation: "boom", saved: false),
-        Card(template: "I am", affirmation: "boom", saved: false),
-        Card(template: "I am", affirmation: "boom", saved: false),
-        Card(template: "I am", affirmation: "boom", saved: false),
+        Card(template: "I will", affirmation: "succeed", saved: false),
+
     ])
     
     @EnvironmentObject var savedCards: Deck
@@ -31,13 +29,13 @@ struct ExploreView: View {
             ZStack{
                 Rectangle()
                     .foregroundStyle(.white)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea() 
                 
                 VStack {
                     Text("Motivation")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundStyle(.yellow1)
+                        .foregroundStyle(.yellow)
                         .multilineTextAlignment(.center)
                         .frame(width: 250)
                     
