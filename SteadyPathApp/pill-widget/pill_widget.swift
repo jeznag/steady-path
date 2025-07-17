@@ -43,24 +43,33 @@ struct SimpleEntry: TimelineEntry {
 
 struct pill_widgetEntryView : View {
     var entry: Provider.Entry
-    @State private var isActive: Bool = false
-
+    
     var body: some View {
         ZStack {
             Color.clear
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
-                Text("Last Medication Record:")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                Text(entry.date, style: .time)
-                    .foregroundStyle(Color.secondary)
+                if SharedDataManager.shared.takingMedicine {
+                    Text("✅ Medication Taken!")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    Text("Last taken:")
+                        .font(.caption)
+                    Text(SharedDataManager.shared.lastMedicationDate, style: .time)
+                        .foregroundStyle(Color.secondary)
+                } else {
+                    Text("⏰ Time for Medication")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    Text("Tap to record")
+                        .font(.caption)
+                        .foregroundStyle(Color.secondary)
+                }
             }
             .frame(maxWidth: .infinity)
-            .widgetURL(URL(string: "steadypath://Pill"))
         }
-       
+        .widgetURL(URL(string: "steadypath://pill"))
     }
 }
 

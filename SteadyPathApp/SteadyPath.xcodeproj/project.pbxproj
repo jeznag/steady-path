@@ -51,6 +51,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9067C7732E288BEC00134676 /* pill-widgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pill-widgetExtension.entitlements"; sourceTree = "<group>"; };
 		90F3CE8F2E2756F200C4DDFE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		90F3CE912E2756F200C4DDFE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		90F3CEAD2E27591700C4DDFE /* pill-widgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "pill-widgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +61,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9067C7752E288C4E00134676 /* Exceptions for "SteadyPath" folder in "pill-widgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/SharedDataManager.swift,
+			);
+			target = 90F3CEAC2E27591700C4DDFE /* pill-widgetExtension */;
+		};
 		90F3CEC22E27591900C4DDFE /* Exceptions for "pill-widget" folder in "pill-widgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -89,6 +97,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				B26297592E27545000DC97A5 /* Exceptions for "SteadyPath" folder in "SteadyPath" target */,
+				9067C7752E288C4E00134676 /* Exceptions for "SteadyPath" folder in "pill-widgetExtension" target */,
 			);
 			path = SteadyPath;
 			sourceTree = "<group>";
@@ -151,6 +160,7 @@
 		B26296EC2E2739A000DC97A5 = {
 			isa = PBXGroup;
 			children = (
+				9067C7732E288BEC00134676 /* pill-widgetExtension.entitlements */,
 				B26296F72E2739A000DC97A5 /* SteadyPath */,
 				B26297082E2739A400DC97A5 /* SteadyPathTests */,
 				B26297122E2739A400DC97A5 /* SteadyPathUITests */,
@@ -400,8 +410,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "pill-widgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "pill-widget/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "pill-widget";
@@ -428,8 +440,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "pill-widgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "pill-widget/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "pill-widget";
@@ -574,6 +588,7 @@
 				CODE_SIGN_ENTITLEMENTS = SteadyPath/SteadyPath.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SteadyPath/Info.plist;
@@ -613,6 +628,7 @@
 				CODE_SIGN_ENTITLEMENTS = SteadyPath/SteadyPath.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SteadyPath/Info.plist;
