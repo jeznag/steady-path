@@ -12,11 +12,20 @@ class SpeechDelegate: NSObject, AVSpeechSynthesizerDelegate, ObservableObject {
 
 func setupAudioSession() {
     do {
-        // Set category for playback (for synthesizer) and record (for recognizer)
-        try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
-        try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+        try session.setPreferredSampleRate(44100)
+        try session.setPreferredInputNumberOfChannels(1)
+        try session.setActive(true, options: .notifyOthersOnDeactivation)
+
+        print("🎧 Audio session set up: \(session.sampleRate) Hz, \(session.inputNumberOfChannels) ch")
+
+        if let input = session.preferredInput {
+            print("🎙️ Preferred input: \(input.portName)")
+        }
+
     } catch {
-        print("Failed to set up audio session: \(error.localizedDescription)")
+        print("❌ Failed to set up audio session: \(error.localizedDescription)")
     }
 }
 
@@ -36,6 +45,7 @@ struct CheckInView: View {
     @State private var hasStarted = false
     @State private var isLoading = false
     @State private var fullTranscript: String = ""
+    @State private var ttsSynthesizer: OpenAITTS? = OpenAITTS()
 
     let personas = ["Bogan Barry", "Calm Carla", "Supportive Sam", "Neutral"]
 
@@ -83,6 +93,7 @@ struct CheckInView: View {
 
                 Button("Done") {
                     isListening = false
+                    print("done!87")
                     recognizer.stop() // triggers transcriptionFinalised when done
                 }
             }
@@ -91,6 +102,7 @@ struct CheckInView: View {
             NotificationCenter.default.addObserver(forName: .transcriptionFinalised, object: nil, queue: .main) { notification in
                 if let final = notification.object as? String {
                     self.responseText = final
+                    print("Not listening anymore96")
                     self.isListening = false
 
                     if !final.isEmpty {
@@ -99,6 +111,7 @@ struct CheckInView: View {
                         self.isLoading = false
                         self.currentPrompt = "Didn't quite catch that. Could you please say something?"
                         self.speak(self.currentPrompt) {
+                            print("Finished talking. Restarting listening")
                             self.isListening = true
                             self.recognizer.startTranscription { _ in }
                         }
@@ -117,7 +130,8 @@ struct CheckInView: View {
                     currentPrompt = res.next_prompt
                     self.isLoading = false;
                     speak(currentPrompt) {
-                        isListening = true
+                        print("yo122")
+                        self.isListening = true
                         recognizer.startTranscription { _ in }
                     }
                 case .failure(let error):
@@ -137,8 +151,9 @@ struct CheckInView: View {
 
         fullTranscript += "\nUser: \(cleanedResponse)\n"
 
-        isListening = false
-        isLoading = true
+        print("Play next prompt!")
+        self.isListening = false
+        self.isLoading = true
 
         ApiClient.shared.getNextPrompt(transcript: fullTranscript, persona: selectedPersona) { result in
             DispatchQueue.main.async {
@@ -147,9 +162,10 @@ struct CheckInView: View {
                     let nextPrompt = "\(res.validation) \(res.next_prompt)"
                     fullTranscript += "App: \(nextPrompt)\n"
                     currentPrompt = nextPrompt
-                    isLoading = false
+                    self.isLoading = false
                     speak(nextPrompt) {
-                        isListening = true
+                        print("yo155")
+                        self.isListening = true
                         recognizer.startTranscription { _ in }
                     }
 
@@ -161,25 +177,27 @@ struct CheckInView: View {
         }
     }
 
-    func speak(_ text: String, onComplete: @escaping () -> Void) {
-        for voice in AVSpeechSynthesisVoice.speechVoices() {
-            print("\(voice.identifier) - \(voice.name) - \(voice.language)")
+    func speak(_ text: String, onCompleteOuter: @escaping () -> Void) {
+        print("📞 speak() called with text: \(text)")
+        DispatchQueue.global(qos: .userInitiated).async {
+            ttsSynthesizer?.speak(text) {
+                print("🎉 Done playing")
+                DispatchQueue.main.async {
+                    onCompleteOuter()
+                }
+            }
         }
-        
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.compact.en-GB.Daniel")
-        utterance.rate = 0.45
-        utterance.pitchMultiplier = 0.95
-
-        speechDelegate.onComplete = onComplete
-        synthesizer.delegate = speechDelegate
-        synthesizer.speak(utterance)
     }
 
     func requestSpeechAuth() {
-        SFSpeechRecognizer.requestAuthorization { status in
-            if status != .authorized {
-                print("Speech recognition not authorized")
+        print("yo205")
+        if #available(iOS 17.0, *) {
+            AVAudioApplication.requestRecordPermission { granted in
+                print("🎤 Mic permission (iOS 17+): \(granted)")
+            }
+        } else {
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                print("🎤 Mic permission (legacy): \(granted)")
             }
         }
     }
@@ -187,12 +205,15 @@ struct CheckInView: View {
 
 // -------------------------------------------------------------------------------------------------------
 
+import AVFAudio
+
 class RecognizerController: ObservableObject {
     @Published var liveTranscript: String = ""
     private var recorder: AVAudioRecorder?
     private var recordingURL: URL?
 
     func startTranscription(onResult: @escaping (String) -> Void) {
+        print("🧪 startTranscription() called")
         let filename = UUID().uuidString + ".m4a"
         let path = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
         recordingURL = path
@@ -205,7 +226,9 @@ class RecognizerController: ObservableObject {
         ]
 
         do {
+            setupAudioSession()
             recorder = try AVAudioRecorder(url: path, settings: settings)
+            print("🛠️ Recorder created")
             recorder?.record()
             print("🎙️ Started recording to \(path)")
         } catch {
@@ -215,12 +238,16 @@ class RecognizerController: ObservableObject {
     }
 
     func stop() {
-        guard let recorder = recorder, recorder.isRecording else { return }
+        guard let recorder = recorder, recorder.isRecording else {
+            print("⚠️ Tried to stop but recorder is nil or not recording")
+            return
+        }
 
         recorder.stop()
         print("🛑 Stopped recording")
 
         if let url = recordingURL {
+            print("📤 Sending to transcription: \(url.lastPathComponent)")
             transcribeFile(url: url)
         }
 

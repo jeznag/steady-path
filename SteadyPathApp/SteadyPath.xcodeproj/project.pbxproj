@@ -217,6 +217,9 @@
 			);
 			mainGroup = B26296EC2E2739A000DC97A5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B26298A12E28B6E800DC97A5 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B26296F62E2739A000DC97A5 /* Products */;
 			projectDirPath = "";
@@ -609,6 +612,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B26298A12E28B6E800DC97A5 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aws-amplify/aws-sdk-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.41.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = B26296ED2E2739A000DC97A5 /* Project object */;
 }

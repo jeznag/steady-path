@@ -1,19 +1,17 @@
-//
-//  Secrets.swift
-//  SteadyPath
-//
-//  Created by Jeremy Nagel on 17/7/2025.
-//
-
-
 import Foundation
 
 struct Secrets {
-    static var openAIKey: String {
+    private static var dict: NSDictionary? {
         guard let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
-              let dict = NSDictionary(contentsOfFile: path),
-              let key = dict["OpenAI_API_Key"] as? String else {
-            fatalError("❌ OpenAI_API_Key not found in Secrets.plist")
+              let dict = NSDictionary(contentsOfFile: path) else {
+            fatalError("❌ Secrets.plist not found")
+        }
+        return dict
+    }
+
+    static var openAIKey: String {
+        guard let key = dict?["OpenAI_API_Key"] as? String else {
+            fatalError("❌ OpenAI_API_Key not found")
         }
         return key
     }
