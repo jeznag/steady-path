@@ -1,26 +1,42 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct SteadyPathApp: App {
+    // MARK: - SwiftData container
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            Item.self,
+        ])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        do {
+            return try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+
+    // MARK: - Scene
     var body: some Scene {
         WindowGroup {
             TabView {
-                PillView()
+                HomeView()
                     .tabItem {
-                        Label("Pill", systemImage: "pill")
+                        Label("Home", systemImage: "house")
                     }
-                    .onOpenURL { url in
-                        // Handle the URL from widget
-                        if url.scheme == "steadypath" && url.host == "pill" {
-                            // Since we're already on PillView, we could refresh or do nothing
-                            print("Widget tapped - already on PillView")
-                        }
+
+                ExploreView()
+                    .tabItem {
+                        Label("Motivation", systemImage: "person.crop.circle")
+                    }
+
+                CheckInView()
+                    .tabItem {
+                        Label("CheckIn", systemImage: "checkmark.circle.fill")
                     }
             }
         }
+        .modelContainer(sharedModelContainer)
     }
-}
-
-extension Notification.Name {
-    static let navigateToPill = Notification.Name("navigateToPill")
 }
