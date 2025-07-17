@@ -1,10 +1,3 @@
-//
-//  SteadyPathApp.swift
-//  SteadyPath
-//
-//  Created by Jeremy Nagel on 16/7/2025.
-//
-
 import SwiftUI
 
 @main
