@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
 from app.audio_utils import transcribe_audio
-from app.ai_analysis import analyze_transcript, get_next_prompt
+from app.ai_analysis import analyze_transcript
 from app.db import save_checkin, init_db
 
 UPLOAD_FOLDER = "uploads"
@@ -40,19 +40,6 @@ def handle_checkin():
         "transcript": transcript,
         "analysis": result
     })
-
-@app.route("/next_prompt", methods=["POST"])
-def next_prompt():
-    data = request.get_json()
-    transcript = data.get("transcript")
-    persona = data.get("persona", "neutral")
-
-    if not transcript:
-        return jsonify({"error": "Missing transcript"}), 400
-
-    result = get_next_prompt(transcript, persona)
-    return jsonify(result)
-
 
 if __name__ == "__main__":
     init_db()

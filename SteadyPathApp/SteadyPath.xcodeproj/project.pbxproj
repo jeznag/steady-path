@@ -61,12 +61,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5842F5DF2E275E300078CFB4 /* Exceptions for "SteadyPath" folder in "SteadyPathUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Views/ContentView.swift,
-			);
-			target = B262970E2E2739A400DC97A5 /* SteadyPathUITests */;
 		9067C7752E288C4E00134676 /* Exceptions for "SteadyPath" folder in "pill-widgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -85,7 +79,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				Views/ContentView.swift,
 			);
 			target = B26296F42E2739A000DC97A5 /* SteadyPath */;
 		};
@@ -104,7 +97,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				B26297592E27545000DC97A5 /* Exceptions for "SteadyPath" folder in "SteadyPath" target */,
-				5842F5DF2E275E300078CFB4 /* Exceptions for "SteadyPath" folder in "SteadyPathUITests" target */,
 				9067C7752E288C4E00134676 /* Exceptions for "SteadyPath" folder in "pill-widgetExtension" target */,
 			);
 			path = SteadyPath;
