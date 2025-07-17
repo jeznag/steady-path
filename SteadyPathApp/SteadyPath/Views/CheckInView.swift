@@ -35,6 +35,7 @@ struct CheckInView: View {
     @State private var selectedPersona = "Bogan Barry"
     @State private var hasStarted = false
     @State private var isLoading = false
+    @State private var fullTranscript: String = ""
 
     let personas = ["Bogan Barry", "Calm Carla", "Supportive Sam", "Neutral"]
 
@@ -65,23 +66,6 @@ struct CheckInView: View {
                     hasStarted = true
                     setupAudioSession()
                     requestSpeechAuth()
-                    NotificationCenter.default.addObserver(forName: .transcriptionFinalised, object: nil, queue: .main) { notification in
-                        if let final = notification.object as? String {
-                            self.responseText = final // Update final responseText
-                        self.isListening = false // No longer listening
-                        // Automatically proceed only if there's actual speech or a deliberate end
-                        if !final.isEmpty {
-                            playNextPrompt()
-                        } else {
-                            // If nothing was said, ensure loading is off and listening can restart if needed
-                            self.isLoading = false
-                            self.currentPrompt = "Didn't quite catch that. Could you please say something?"
-                            self.speak(self.currentPrompt) {
-                                self.isListening = true
-                                self.recognizer.startTranscription { _ in }
-                            }
-                        }
-                    }
                     loadFirstPrompt()
                 }
                 .padding()
@@ -104,11 +88,29 @@ struct CheckInView: View {
                     .italic()
                     .padding()
 
-                Button("Next") {
-                    recognizer.stop() // stop recording first
-                    playNextPrompt()
+                Button("Done") {
+                    isListening = false
+                    recognizer.stop() // triggers transcriptionFinalised when done
                 }
-                .disabled(isListening || responseText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+        }
+        .onAppear {
+            NotificationCenter.default.addObserver(forName: .transcriptionFinalised, object: nil, queue: .main) { notification in
+                if let final = notification.object as? String {
+                    self.responseText = final
+                    self.isListening = false
+
+                    if !final.isEmpty {
+                        playNextPrompt()
+                    } else {
+                        self.isLoading = false
+                        self.currentPrompt = "Didn't quite catch that. Could you please say something?"
+                        self.speak(self.currentPrompt) {
+                            self.isListening = true
+                            self.recognizer.startTranscription { _ in }
+                        }
+                    }
+                }
             }
         }
     }
@@ -123,10 +125,7 @@ struct CheckInView: View {
                     self.isLoading = false;
                     speak(currentPrompt) {
                         isListening = true
-                        recognizer.startTranscription { transcript in
-                            responseText = transcript
-                            isListening = false
-                        }
+                        recognizer.startTranscription { _ in }
                     }
                 case .failure(let error):
                     currentPrompt = "Error getting first question. Try again."
@@ -137,28 +136,28 @@ struct CheckInView: View {
     }
 
     func playNextPrompt() {
-        // Already finished listening and captured the transcript
-        let transcript = responseText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !transcript.isEmpty else {
+        let cleanedResponse = responseText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanedResponse.isEmpty else {
             print("⚠️ No transcript captured.")
             return
         }
 
-        isListening = false // Just in case
+        fullTranscript += "\nUser: \(cleanedResponse)\n"
+
+        isListening = false
         isLoading = true
 
-        ApiClient.shared.getNextPrompt(transcript: transcript, persona: selectedPersona) { result in
+        ApiClient.shared.getNextPrompt(transcript: fullTranscript, persona: selectedPersona) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let res):
-                    currentPrompt = "\(res.validation) \(res.next_prompt)"
-                    isLoading = true
-                    speak(currentPrompt) {
+                    let nextPrompt = "\(res.validation) \(res.next_prompt)"
+                    fullTranscript += "App: \(nextPrompt)\n"
+                    currentPrompt = nextPrompt
+                    isLoading = false
+                    speak(nextPrompt) {
                         isListening = true
-                        recognizer.startTranscription { nextTranscript in
-                            responseText = nextTranscript
-                            isListening = false
-                        }
+                        recognizer.startTranscription { _ in }
                     }
 
                 case .failure(let error):
@@ -175,7 +174,7 @@ struct CheckInView: View {
         }
         
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.siri_gordon_en-AU_compact")
+        utterance.voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.compact.en-GB.Daniel")
         utterance.rate = 0.45
         utterance.pitchMultiplier = 0.95
 
@@ -196,127 +195,89 @@ struct CheckInView: View {
 // -------------------------------------------------------------------------------------------------------
 
 class RecognizerController: ObservableObject {
-    private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-AU"))
-    private let audioEngine = AVAudioEngine()
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
     @Published var liveTranscript: String = ""
-    private var speechTimer: Timer?
-    private let speechTimeoutDuration: TimeInterval = 2.0 // 2 seconds of silence
+    private var recorder: AVAudioRecorder?
+    private var recordingURL: URL?
 
     func startTranscription(onResult: @escaping (String) -> Void) {
-        // Cancel the previous task if it's running
-        if recognitionTask != nil {
-            recognitionTask?.cancel()
-            recognitionTask = nil
-        }
-        // Invalidate any existing timer
-        speechTimer?.invalidate()
-        speechTimer = nil
+        let filename = UUID().uuidString + ".m4a"
+        let path = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        recordingURL = path
 
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = recognitionRequest else {
-            fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object")
-        }
-        recognitionRequest.shouldReportPartialResults = true // Crucial for live updates
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
 
-        guard let recognizer = recognizer, recognizer.isAvailable else {
-            print("Speech recognizer is not available or not supported for the current locale.")
-            onResult("") // Inform the caller that recognition won't start
-            return
-        }
-
-        let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-            recognitionRequest.append(buffer)
-        }
-
-        audioEngine.prepare()
         do {
-            try audioEngine.start()
-            // Start the silence detection timer
-            resetSpeechTimer(onResult: onResult)
+            recorder = try AVAudioRecorder(url: path, settings: settings)
+            recorder?.record()
+            print("🎙️ Started recording to \(path)")
         } catch {
-            print("Audio engine couldn't start: \(error)")
-            onResult("") // Inform the caller about the error
-        }
-
-        // Request authorization again (it's good practice to ensure it's authorized when starting a new task)
-        SFSpeechRecognizer.requestAuthorization { status in
-            print("Speech authorization status: \(status)")
-            if status != .authorized {
-                print("Speech recognition not authorized.")
-                self.stop()
-                onResult("") // Inform the caller that recognition won't proceed
-                return
-            }
-        }
-
-        recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { result, error in
-            var isFinal = false
-
-            if let result = result {
-                let final = result.bestTranscription.formattedString
-                DispatchQueue.main.async {
-                    self.liveTranscript = final
-                }
-                isFinal = result.isFinal
-
-                // If we get any result (partial or final), reset the timer
-                self.resetSpeechTimer(onResult: onResult)
-
-                if isFinal {
-                    DispatchQueue.main.async {
-                        self.liveTranscript = final
-                        NotificationCenter.default.post(name: .transcriptionFinalised, object: final)
-                    }
-                }
-            }
-
-            if error != nil || isFinal {
-                // If there's an error or the result is final, stop
-                self.stop()
-                self.speechTimer?.invalidate() // Invalidate timer when stopped naturally
-                if let result = result {
-                    onResult(result.bestTranscription.formattedString)
-                } else {
-                    onResult("") // In case of error with no partial result
-                }
-            }
+            print("❌ Failed to start recording: \(error)")
+            onResult("")
         }
     }
-
-    private func resetSpeechTimer(onResult: @escaping (String) -> Void) {
-        speechTimer?.invalidate() // Invalidate existing timer
-        speechTimer = Timer.scheduledTimer(withTimeInterval: speechTimeoutDuration, repeats: false) { [weak self] _ in
-            guard let self = self else { return }
-            print("Speech timeout reached. Stopping recognition.")
-            self.stop()
-            // If the timer fires and we have a partial transcript, send it as final
-            if !self.liveTranscript.isEmpty {
-                NotificationCenter.default.post(name: .transcriptionFinalised, object: self.liveTranscript)
-            } else {
-                // If no speech was detected at all, send an empty string
-                NotificationCenter.default.post(name: .transcriptionFinalised, object: "")
-            }
-        }
-    }
-
 
     func stop() {
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel() // Cancel to stop processing immediately
-        recognitionTask = nil
-        recognitionRequest = nil
-        speechTimer?.invalidate() // Ensure timer is stopped
-        speechTimer = nil
+        guard let recorder = recorder, recorder.isRecording else { return }
 
-        // Reset liveTranscript when stopping
-        DispatchQueue.main.async {
-            self.liveTranscript = ""
+        recorder.stop()
+        print("🛑 Stopped recording")
+
+        if let url = recordingURL {
+            transcribeFile(url: url)
         }
+
+        self.recorder = nil
+        self.recordingURL = nil
+    }
+
+    private func transcribeFile(url: URL) {
+        print("⬆️ Uploading to OpenAI: \(url.lastPathComponent)")
+        var request = URLRequest(url: URL(string: "https://api.openai.com/v1/audio/transcriptions")!)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(Secrets.openAIKey)", forHTTPHeaderField: "Authorization")
+
+        let boundary = UUID().uuidString
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"model\"\r\n\r\nwhisper-1\r\n".data(using: .utf8)!)
+
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"audio.m4a\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: audio/m4a\r\n\r\n".data(using: .utf8)!)
+        body.append(try! Data(contentsOf: url))
+        body.append("\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+
+        request.httpBody = body
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                print("❌ API request failed: \(error?.localizedDescription ?? "Unknown error")")
+                NotificationCenter.default.post(name: .transcriptionFinalised, object: "")
+                return
+            }
+
+            if let result = try? JSONDecoder().decode(OpenAIWhisperResponse.self, from: data) {
+                DispatchQueue.main.async {
+                    self.liveTranscript = result.text
+                    NotificationCenter.default.post(name: .transcriptionFinalised, object: result.text)
+                }
+            } else {
+                print("❌ Failed to decode API response: \(String(data: data, encoding: .utf8) ?? "No body")")
+                NotificationCenter.default.post(name: .transcriptionFinalised, object: "")
+            }
+        }.resume()
+    }
+
+    struct OpenAIWhisperResponse: Codable {
+        let text: String
     }
 }
