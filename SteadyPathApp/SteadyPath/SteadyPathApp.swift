@@ -11,15 +11,18 @@ import SwiftUI
 struct SteadyPathApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationView {
+            TabView {
                 PillView()
-            }
-            .onOpenURL { url in
-                // Handle the URL from widget
-                if url.scheme == "steadypath" && url.host == "pill" {
-                    // Since we're already on PillView, we could refresh or do nothing
-                    print("Widget tapped - already on PillView")
-                }
+                    .tabItem {
+                        Label("Pill", systemImage: "pill")
+                    }
+                    .onOpenURL { url in
+                        // Handle the URL from widget
+                        if url.scheme == "steadypath" && url.host == "pill" {
+                            // Since we're already on PillView, we could refresh or do nothing
+                            print("Widget tapped - already on PillView")
+                        }
+                    }
             }
         }
     }
